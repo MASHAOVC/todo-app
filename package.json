@@ -18,7 +18,8 @@
     "eject": "react-scripts eject",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
-    "prepare": "husky"
+    "prepare": "husky",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,html}\""
   },
   "browserslist": {
     "production": [

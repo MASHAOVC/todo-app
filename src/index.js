@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { Component } from 'react';
 
+import './index.css';
 import NewTaskForm from './components/new-task-form';
 import TaskList from './components/task-list';
 import Footer from './components/footer';
@@ -21,8 +22,8 @@ class App extends Component {
 
     return (
       <section className="todoapp">
-        <header className="header">
-          <h1>todos</h1>
+        <header>
+          <h1 className="heading">todos</h1>
           <NewTaskForm />
         </header>
         <section className="main">

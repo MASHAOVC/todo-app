@@ -9,7 +9,10 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      todoData: [{ label: 'Drink Coffee' }, { label: 'Make An App' }],
+      todoData: [
+        { label: 'Drink Coffee', created: new Date(), id: 1 },
+        { label: 'Make An App', created: new Date(), id: 2 },
+      ],
     };
   }
 

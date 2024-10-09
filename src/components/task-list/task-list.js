@@ -8,9 +8,11 @@ export default class TaskList extends Component {
     const { todos } = this.props;
 
     const elements = todos.map((el) => {
+      const { id, ...restProps } = el;
+
       return (
-        <li>
-          <Task {...el} />
+        <li key={id} className="">
+          <Task {...restProps} />
         </li>
       );
     });

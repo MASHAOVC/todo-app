@@ -11,11 +11,28 @@ class App extends Component {
     super();
     this.state = {
       todoData: [
-        { label: 'Drink Coffee', created: new Date(), id: 1 },
-        { label: 'Make An App', created: new Date(), id: 2 },
+        { label: 'Drink Coffee', created: new Date(), id: 1, completed: false },
+        { label: 'Make An App', created: new Date(), id: 2, completed: false },
       ],
     };
   }
+
+  onToggleCompleted = (id) => {
+    this.setState(({ todoData }) => {
+      let newArr = todoData.map((el) => {
+        if (el.id === id) {
+          const newItem = { ...el, completed: !el.completed };
+          return newItem;
+        }
+
+        return el;
+      });
+
+      return { todoData: newArr };
+    });
+  };
+
+  onDeleted = () => {};
 
   render() {
     const { todoData } = this.state;
@@ -27,7 +44,7 @@ class App extends Component {
           <NewTaskForm />
         </header>
         <section className="main">
-          <TaskList todos={todoData} />
+          <TaskList todos={todoData} onToggleCompleted={this.onToggleCompleted} />
           <Footer />
         </section>
       </section>

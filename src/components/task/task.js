@@ -9,7 +9,7 @@ export default class Task extends Component {
   }
 
   render() {
-    const { label, created } = this.props;
+    const { label, created, completed, onToggleCompleted, id } = this.props;
     const { formattedCreateTime } = this.state;
 
     setTimeout(() => {
@@ -22,9 +22,23 @@ export default class Task extends Component {
 
     return (
       <div className="view">
-        <input className="toggle" type="checkbox" />
+        <input
+          className="toggle"
+          type="checkbox"
+          checked={completed}
+          onChange={() => {
+            onToggleCompleted(id);
+          }}
+        />
         <label>
-          <span className="description">{label}</span>
+          <span
+            className="description"
+            onClick={() => {
+              onToggleCompleted(id);
+            }}
+          >
+            {label}
+          </span>
           <span className="created"> created {formattedCreateTime || formatDistanceToNow(created)} ago</span>
         </label>
         <button className="icon icon-edit"></button>

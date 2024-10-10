@@ -5,7 +5,7 @@ import Task from '../task';
 
 export default class TaskList extends Component {
   render() {
-    const { todos, onToggleCompleted } = this.props;
+    const { todos, onToggleCompleted, onDeleted } = this.props;
 
     const elements = todos.map((el) => {
       const { id, completed } = el;
@@ -18,7 +18,7 @@ export default class TaskList extends Component {
 
       return (
         <li key={id} className={classNames}>
-          <Task {...el} onToggleCompleted={onToggleCompleted} />
+          <Task {...el} onToggleCompleted={onToggleCompleted} onDeleted={onDeleted} />
         </li>
       );
     });

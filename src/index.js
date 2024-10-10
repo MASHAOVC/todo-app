@@ -32,7 +32,20 @@ class App extends Component {
     });
   };
 
-  onDeleted = () => {};
+  onDeleted = (id) => {
+    this.setState(({ todoData }) => {
+      const idx = todoData.findIndex((el) => el.id === id);
+
+      const before = todoData.slice(0, idx);
+      const after = todoData.slice(idx + 1);
+
+      const newArr = [...before, ...after];
+
+      return {
+        todoData: newArr,
+      };
+    });
+  };
 
   render() {
     const { todoData } = this.state;
@@ -44,7 +57,7 @@ class App extends Component {
           <NewTaskForm />
         </header>
         <section className="main">
-          <TaskList todos={todoData} onToggleCompleted={this.onToggleCompleted} />
+          <TaskList todos={todoData} onToggleCompleted={this.onToggleCompleted} onDeleted={this.onDeleted} />
           <Footer />
         </section>
       </section>

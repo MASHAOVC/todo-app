@@ -76,7 +76,7 @@ class App extends Component {
         </header>
         <section className="main">
           <TaskList todos={todoData} onToggleCompleted={this.onToggleCompleted} onDeleted={this.deleteItem} />
-          <Footer />
+          <Footer todos={todoData} />
         </section>
       </section>
     );

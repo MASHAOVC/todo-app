@@ -11,12 +11,18 @@ class App extends Component {
     super();
     this.maxId = 100;
     this.state = {
-      todoData: [
-        { label: 'Drink Coffee', created: new Date(), id: 1, completed: false },
-        { label: 'Make An App', created: new Date(), id: 2, completed: false },
-      ],
+      todoData: [this.createTask('Drink Coffee')],
     };
   }
+
+  createTask = (label) => {
+    return {
+      label,
+      created: new Date(),
+      id: this.maxId++,
+      completed: false,
+    };
+  };
 
   onToggleCompleted = (id) => {
     this.setState(({ todoData }) => {
@@ -49,12 +55,7 @@ class App extends Component {
   };
 
   addItem = (text) => {
-    const newItem = {
-      label: text,
-      created: new Date(),
-      id: this.maxId++,
-      completed: false,
-    };
+    const newItem = this.createTask(text);
 
     this.setState(({ todoData }) => {
       const newArr = [...todoData, newItem];

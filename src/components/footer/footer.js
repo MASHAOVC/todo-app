@@ -5,7 +5,7 @@ import TasksFilter from '../tasks-filter';
 
 export default class Footer extends Component {
   render() {
-    const { todos } = this.props;
+    const { todos, onDeleteAll } = this.props;
     let activeCount = 0;
 
     for (let i = 0; i < todos.length; i++) {
@@ -16,7 +16,14 @@ export default class Footer extends Component {
       <footer className="footer">
         <span className="todo-count"> {activeCount} items left</span>
         <TasksFilter />
-        <button className="clear-completed">Clear completed</button>
+        <button
+          className="clear-completed"
+          onClick={() => {
+            onDeleteAll();
+          }}
+        >
+          Clear completed
+        </button>
       </footer>
     );
   }

@@ -65,6 +65,16 @@ class App extends Component {
     });
   };
 
+  deleteCompletedItems = () => {
+    this.setState(({ todoData }) => {
+      const newArr = todoData.filter((el) => !el.completed);
+
+      return {
+        todoData: newArr,
+      };
+    });
+  };
+
   render() {
     const { todoData } = this.state;
 
@@ -76,7 +86,7 @@ class App extends Component {
         </header>
         <section className="main">
           <TaskList todos={todoData} onToggleCompleted={this.onToggleCompleted} onDeleted={this.deleteItem} />
-          <Footer todos={todoData} />
+          <Footer onDeleteAll={this.deleteCompletedItems} todos={todoData} />
         </section>
       </section>
     );

@@ -9,6 +9,7 @@ import Footer from './components/footer';
 class App extends Component {
   constructor() {
     super();
+    this.maxId = 100;
     this.state = {
       todoData: [
         { label: 'Drink Coffee', created: new Date(), id: 1, completed: false },
@@ -32,7 +33,7 @@ class App extends Component {
     });
   };
 
-  onDeleted = (id) => {
+  deleteItem = (id) => {
     this.setState(({ todoData }) => {
       const idx = todoData.findIndex((el) => el.id === id);
 
@@ -47,6 +48,22 @@ class App extends Component {
     });
   };
 
+  addItem = (text) => {
+    const newItem = {
+      label: text,
+      created: new Date(),
+      id: this.maxId++,
+      completed: false,
+    };
+
+    this.setState(({ todoData }) => {
+      const newArr = [...todoData, newItem];
+      return {
+        todoData: newArr,
+      };
+    });
+  };
+
   render() {
     const { todoData } = this.state;
 
@@ -54,10 +71,10 @@ class App extends Component {
       <section className="todoapp">
         <header>
           <h1 className="heading">todos</h1>
-          <NewTaskForm />
+          <NewTaskForm onItemAdded={this.addItem} />
         </header>
         <section className="main">
-          <TaskList todos={todoData} onToggleCompleted={this.onToggleCompleted} onDeleted={this.onDeleted} />
+          <TaskList todos={todoData} onToggleCompleted={this.onToggleCompleted} onDeleted={this.deleteItem} />
           <Footer />
         </section>
       </section>

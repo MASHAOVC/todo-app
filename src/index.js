@@ -11,7 +11,8 @@ class App extends Component {
     super();
     this.maxId = 100;
     this.state = {
-      todoData: [this.createTask('Drink Coffee')],
+      todoData: [this.createTask('Drink Coffee'), this.createTask('Eat Breakfast')],
+      show: 'all',
     };
   }
 
@@ -75,8 +76,15 @@ class App extends Component {
     });
   };
 
+  onFilter = (string) => {
+    console.log(string);
+    this.setState({
+      show: string,
+    });
+  };
+
   render() {
-    const { todoData } = this.state;
+    const { todoData, show } = this.state;
 
     return (
       <section className="todoapp">
@@ -85,8 +93,13 @@ class App extends Component {
           <NewTaskForm onItemAdded={this.addItem} />
         </header>
         <section className="main">
-          <TaskList todos={todoData} onToggleCompleted={this.onToggleCompleted} onDeleted={this.deleteItem} />
-          <Footer onDeleteAll={this.deleteCompletedItems} todos={todoData} />
+          <TaskList
+            todos={todoData}
+            show={show}
+            onToggleCompleted={this.onToggleCompleted}
+            onDeleted={this.deleteItem}
+          />
+          <Footer onDeleteAll={this.deleteCompletedItems} onFilter={this.onFilter} todos={todoData} show={show} />
         </section>
       </section>
     );

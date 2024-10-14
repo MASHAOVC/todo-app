@@ -22,6 +22,7 @@ class App extends Component {
       created: new Date(),
       id: this.maxId++,
       completed: false,
+      editing: false,
     };
   };
 
@@ -77,9 +78,38 @@ class App extends Component {
   };
 
   onFilter = (string) => {
-    console.log(string);
     this.setState({
       show: string,
+    });
+  };
+
+  onEditClick = (id) => {
+    this.setState(({ todoData }) => {
+      let newArr = todoData.map((el) => {
+        if (el.id === id) {
+          const newItem = { ...el, editing: !el.editing };
+          return newItem;
+        }
+
+        return el;
+      });
+
+      return { todoData: newArr };
+    });
+  };
+
+  onEditSave = (text, id) => {
+    this.setState(({ todoData }) => {
+      let newArr = todoData.map((el) => {
+        if (el.id === id) {
+          const newItem = { ...el, editing: !el.editing, label: text };
+          return newItem;
+        }
+
+        return el;
+      });
+
+      return { todoData: newArr };
     });
   };
 
@@ -98,6 +128,8 @@ class App extends Component {
             show={show}
             onToggleCompleted={this.onToggleCompleted}
             onDeleted={this.deleteItem}
+            onEditClick={this.onEditClick}
+            onEditSave={this.onEditSave}
           />
           <Footer onDeleteAll={this.deleteCompletedItems} onFilter={this.onFilter} todos={todoData} show={show} />
         </section>

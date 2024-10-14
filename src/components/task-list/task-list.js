@@ -2,10 +2,11 @@ import { Component } from 'react';
 import './task-list.css';
 
 import Task from '../task';
+import EditForm from '../edit-form/edit-form';
 
 export default class TaskList extends Component {
   render() {
-    const { todos, show, onToggleCompleted, onDeleted } = this.props;
+    const { todos, show, onToggleCompleted, onDeleted, onEditClick, onEditSave } = this.props;
 
     const elements = todos
       .filter((todo) => {
@@ -19,9 +20,13 @@ export default class TaskList extends Component {
         }
       })
       .map((el) => {
-        const { id, completed } = el;
+        const { id, completed, editing } = el;
 
         let classNames = '';
+
+        if (editing) {
+          classNames = 'editing';
+        }
 
         if (completed) {
           classNames = 'completed';
@@ -29,7 +34,11 @@ export default class TaskList extends Component {
 
         return (
           <li key={id} className={classNames}>
-            <Task {...el} onToggleCompleted={onToggleCompleted} onDeleted={onDeleted} />
+            {editing ? (
+              <EditForm {...el} onEditSave={onEditSave} />
+            ) : (
+              <Task {...el} onToggleCompleted={onToggleCompleted} onDeleted={onDeleted} onEditClick={onEditClick} />
+            )}
           </li>
         );
       });

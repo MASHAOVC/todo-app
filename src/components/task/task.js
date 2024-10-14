@@ -9,7 +9,7 @@ export default class Task extends Component {
   }
 
   render() {
-    const { label, created, completed, onToggleCompleted, onDeleted, id } = this.props;
+    const { label, created, completed, onToggleCompleted, onDeleted, id, onEditClick } = this.props;
     const { formattedCreateTime } = this.state;
 
     setTimeout(() => {
@@ -41,7 +41,12 @@ export default class Task extends Component {
           </span>
           <span className="created"> created {formattedCreateTime || formatDistanceToNow(created)} ago</span>
         </label>
-        <button className="icon icon-edit"></button>
+        <button
+          className="icon icon-edit"
+          onClick={() => {
+            onEditClick(id);
+          }}
+        ></button>
         <button
           className="icon icon-destroy"
           onClick={() => {

@@ -8,9 +8,8 @@ export default class Task extends Component {
     this.state = {};
   }
 
-  render() {
-    const { label, created, completed, onToggleCompleted, onDeleted, id, onEditClick } = this.props;
-    const { formattedCreateTime } = this.state;
+  delayTimeUpdate = () => {
+    const { created } = this.props;
 
     setTimeout(() => {
       this.setState(() => {
@@ -18,7 +17,14 @@ export default class Task extends Component {
           formattedCreateTime: formatDistanceToNow(created),
         };
       });
-    }, 1000); //it's better to use Life-Cycle Method in such case
+    }, 1000);
+  }; //it's better to use Life-Cycle Method in such case
+
+  render() {
+    const { label, created, completed, onToggleCompleted, onDeleted, id, onEditClick } = this.props;
+    const { formattedCreateTime } = this.state;
+
+    this.delayTimeUpdate();
 
     return (
       <div className="view">

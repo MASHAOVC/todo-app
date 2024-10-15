@@ -11,7 +11,7 @@ class App extends Component {
     super();
     this.maxId = 100;
     this.state = {
-      todoData: [this.createTask('Drink Coffee'), this.createTask('Eat Breakfast')],
+      todoData: [],
       show: 'all',
     };
   }
@@ -26,11 +26,11 @@ class App extends Component {
     };
   };
 
-  onToggleCompleted = (id) => {
+  updateTask = (id, cb) => {
     this.setState(({ todoData }) => {
       let newArr = todoData.map((el) => {
         if (el.id === id) {
-          const newItem = { ...el, completed: !el.completed };
+          const newItem = cb(el);
           return newItem;
         }
 
@@ -39,6 +39,18 @@ class App extends Component {
 
       return { todoData: newArr };
     });
+  };
+
+  onToggleCompleted = (id) => {
+    this.updateTask(id, (el) => ({ ...el, completed: !el.completed }));
+  };
+
+  onEditClick = (id) => {
+    this.updateTask(id, (el) => ({ ...el, editing: !el.editing }));
+  };
+
+  onEditSave = (text, id) => {
+    this.updateTask(id, (el) => ({ ...el, editing: !el.editing, label: text }));
   };
 
   deleteItem = (id) => {
@@ -80,36 +92,6 @@ class App extends Component {
   onFilter = (string) => {
     this.setState({
       show: string,
-    });
-  };
-
-  onEditClick = (id) => {
-    this.setState(({ todoData }) => {
-      let newArr = todoData.map((el) => {
-        if (el.id === id) {
-          const newItem = { ...el, editing: !el.editing };
-          return newItem;
-        }
-
-        return el;
-      });
-
-      return { todoData: newArr };
-    });
-  };
-
-  onEditSave = (text, id) => {
-    this.setState(({ todoData }) => {
-      let newArr = todoData.map((el) => {
-        if (el.id === id) {
-          const newItem = { ...el, editing: !el.editing, label: text };
-          return newItem;
-        }
-
-        return el;
-      });
-
-      return { todoData: newArr };
     });
   };
 

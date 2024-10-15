@@ -1,9 +1,18 @@
 import { Component } from 'react';
 import './tasks-filter.css';
+import PropTypes from 'prop-types';
 
 export default class TasksFilter extends Component {
-  render() {
-    const { onFilter, show } = this.props;
+  static defaultProps = {
+    show: 'all',
+  };
+
+  static propTypes = {
+    show: PropTypes.string,
+  };
+
+  getClassNames = () => {
+    const { show } = this.props;
 
     let className = '';
     let activeClassName = '';
@@ -25,6 +34,14 @@ export default class TasksFilter extends Component {
         completedClassName = '';
         completedClassName = '';
     }
+
+    return { className, activeClassName, completedClassName };
+  };
+
+  render() {
+    const { onFilter } = this.props;
+
+    let { className, activeClassName, completedClassName } = this.getClassNames();
 
     return (
       <ul className="filters">

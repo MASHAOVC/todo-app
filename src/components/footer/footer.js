@@ -11,7 +11,7 @@ export default class Footer extends Component {
     for (let i = 0; i < todos.length; i++) {
       if (!todos[i].completed) activeCount++;
     }
-    console.log(activeCount);
+
     return activeCount;
   };
 

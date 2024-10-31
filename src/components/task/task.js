@@ -44,8 +44,8 @@ export default class Task extends Component {
               onToggleCompleted(id);
             }}
           >
-            <button class="icon icon-play"></button>
-            <button class="icon icon-pause"></button>
+            <button className="icon icon-play"></button>
+            <button className="icon icon-pause"></button>
             {' 12:25'}
           </span>
           <span className="description"> created {formattedCreateTime || formatDistanceToNow(created)} ago</span>

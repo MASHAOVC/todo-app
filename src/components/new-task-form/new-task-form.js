@@ -27,14 +27,18 @@ export default class NewTaskForm extends Component {
 
   render() {
     return (
-      <input
-        className="new-todo"
-        placeholder="What needs to be done?"
-        autoFocus
-        value={this.state.label}
-        onChange={this.onLabelChange}
-        onKeyDown={this.onKeyDown}
-      />
+      <form className="new-todo-form">
+        <input
+          className="new-todo"
+          placeholder="What needs to be done?"
+          autoFocus
+          value={this.state.label}
+          onChange={this.onLabelChange}
+          onKeyDown={this.onKeyDown}
+        />
+        <input className="new-todo-form__timer" placeholder="Min" autoFocus />
+        <input className="new-todo-form__timer" placeholder="Sec" autoFocus />
+      </form>
     );
   }
 }

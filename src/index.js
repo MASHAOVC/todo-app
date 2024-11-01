@@ -16,9 +16,11 @@ class App extends Component {
     };
   }
 
-  createTask = (label) => {
+  createTask = (label, min, sec) => {
     return {
       label,
+      min,
+      sec,
       created: new Date(),
       id: this.maxId++,
       completed: false,
@@ -68,8 +70,8 @@ class App extends Component {
     });
   };
 
-  addItem = (text) => {
-    const newItem = this.createTask(text);
+  addItem = (text, min, sec) => {
+    const newItem = this.createTask(text, min, sec);
 
     this.setState(({ todoData }) => {
       const newArr = [...todoData, newItem];

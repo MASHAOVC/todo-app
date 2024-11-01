@@ -21,7 +21,7 @@ export default class Task extends Component {
   }; //it's better to use Life-Cycle Method in such case
 
   render() {
-    const { label, created, completed, onToggleCompleted, onDeleted, id, onEditClick } = this.props;
+    const { label, created, completed, onToggleCompleted, onDeleted, id, onEditClick, min, sec } = this.props;
     const { formattedCreateTime } = this.state;
 
     this.delayTimeUpdate();
@@ -46,7 +46,7 @@ export default class Task extends Component {
           >
             <button className="icon icon-play"></button>
             <button className="icon icon-pause"></button>
-            {' 12:25'}
+            {` ${min}:${sec}`}
           </span>
           <span className="description"> created {formattedCreateTime || formatDistanceToNow(created)} ago</span>
         </label>

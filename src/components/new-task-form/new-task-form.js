@@ -6,38 +6,76 @@ export default class NewTaskForm extends Component {
     super();
     this.state = {
       label: '',
+      min: '',
+      sec: '',
     };
   }
 
   onLabelChange = (e) => {
+    this.onInputChange('label', e);
+  };
+
+  onMinChange = (e) => {
+    this.onInputChange('min', e);
+  };
+
+  onSecChange = (e) => {
+    this.onInputChange('sec', e);
+  };
+
+  onInputChange = (property, event) => {
     this.setState({
-      label: e.target.value,
+      [property]: event.target.value,
     });
   };
 
-  onKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      this.props.onItemAdded(e.target.value);
+  handleSubmit = (e) => {
+    e.preventDefault();
 
-      this.setState({
-        label: '',
-      });
-    }
+    this.props.onItemAdded(this.state.label, this.state.min, this.state.sec);
+
+    this.setState({
+      label: '',
+      min: '',
+      sec: '',
+    });
   };
 
   render() {
     return (
-      <form className="new-todo-form">
+      <form className="new-todo-form" onSubmit={this.handleSubmit}>
+        <button type="submit"></button>
         <input
           className="new-todo"
+          type="text"
+          name="label"
           placeholder="What needs to be done?"
           autoFocus
           value={this.state.label}
           onChange={this.onLabelChange}
-          onKeyDown={this.onKeyDown}
+          required
         />
-        <input className="new-todo-form__timer" placeholder="Min" />
-        <input className="new-todo-form__timer" placeholder="Sec" />
+        <input
+          className="new-todo-form__timer"
+          type="number"
+          name="minutes"
+          min="1"
+          value={this.state.min}
+          onChange={this.onMinChange}
+          placeholder="Min"
+          required
+        />
+        <input
+          className="new-todo-form__timer"
+          type="number"
+          name="seconds"
+          min="0"
+          max="60"
+          value={this.state.sec}
+          onChange={this.onSecChange}
+          placeholder="Sec"
+          required
+        />
       </form>
     );
   }

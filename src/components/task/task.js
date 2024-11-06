@@ -3,63 +3,78 @@ import './task.css';
 import { formatDistanceToNow } from 'date-fns';
 
 export default class Task extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      startAt: null,
-      remainingMin: props.min,
-      remainingSec: props.sec,
-    };
+  constructor() {
+    super();
+    this.state = {};
     this.intervalId = null;
+  }
+
+  componentDidMount() {
+    this.delayTimeUpdate();
   }
 
   componentWillUnmount() {
     clearInterval(this.intervalId);
   }
 
-  onToggleTimerStart = () => {
-    const { min, sec } = this.props;
-    const totalMilliseconds = (min * 60 + +sec) * 1000;
-
-    this.setState({
-      startAt: new Date(),
-    });
-
-    clearInterval(this.intervalId);
-    this.intervalId = setInterval(() => {
-      const remainingTime = totalMilliseconds - (new Date() - this.state.startAt);
-
-      if (remainingTime <= 0) {
-        clearInterval(this.intervalId);
-        this.setState({ remainingMin: 0, remainingSec: 0 });
-      } else {
-        const remainingMin = Math.floor(remainingTime / 60000);
-        const remainingSec = Math.floor((remainingTime % 60000) / 1000);
-
-        this.setState({ remainingMin, remainingSec });
-      }
-    }, 1000);
-  };
-
   delayTimeUpdate = () => {
     const { created } = this.props;
 
-    setTimeout(() => {
+    this.intervalId = setInterval(() => {
       this.setState(() => {
         return {
           formattedCreateTime: formatDistanceToNow(created),
         };
       });
     }, 1000);
-  }; //it's better to use Life-Cycle Method in such case
+  };
+
+  // onToggleTimerStart = () => {
+  //   const { min, sec } = this.props;
+  //   const totalMilliseconds = (min * 60 + sec) * 1000;
+
+  //   this.setState({
+  //     startAt: Date.now(),
+  //   });
+
+  //   clearInterval(this.intervalId);
+
+  //   this.intervalId = setInterval(() => {
+  //     const remainingTime = totalMilliseconds - (Date.now() - this.state.startAt);
+
+  //     if (remainingTime <= 0) {
+  //       clearInterval(this.intervalId);
+  //       this.setState({ remainingMin: 0, remainingSec: 0 });
+  //     } else {
+  //       let remainingMin = 0;
+  //       let remainingSec = Math.round(remainingTime / 1000);
+
+  //       while (remainingSec >= 60) {
+  //         remainingSec -= 60;
+  //         remainingMin += 1;
+  //       }
+
+  //       this.setState({ remainingMin, remainingSec });
+  //     }
+  //   }, 1000);
+  // };
 
   render() {
-    const { label, created, completed, onToggleCompleted, onDeleted, id, onEditClick } = this.props;
-    const { formattedCreateTime, remainingMin, remainingSec } = this.state;
+    const {
+      label,
+      created,
+      completed,
+      onToggleCompleted,
+      onDeleted,
+      id,
+      onEditClick,
+      onToggleTimerStart,
+      timer,
+      onToggleTimerPause,
+    } = this.props;
+    const { formattedCreateTime } = this.state;
 
-    const displaySec = remainingSec < 10 ? `0${remainingSec}` : remainingSec;
-
-    this.delayTimeUpdate();
+    const displaySec = timer.remainingSec < 10 ? `0${timer.remainingSec}` : timer.remainingSec;
 
     return (
       <div className="view">
@@ -84,11 +99,16 @@ export default class Task extends Component {
             <button
               className="icon icon-play"
               onClick={() => {
-                this.onToggleTimerStart();
+                onToggleTimerStart(id);
               }}
             ></button>
-            <button className="icon icon-pause"></button>
-            {` ${remainingMin}:${displaySec}`}
+            <button
+              className="icon icon-pause"
+              onClick={() => {
+                onToggleTimerPause();
+              }}
+            ></button>
+            {` ${timer.remainingMin}:${displaySec}`}
           </span>
           <span className="description"> created {formattedCreateTime || formatDistanceToNow(created)} ago</span>
         </label>

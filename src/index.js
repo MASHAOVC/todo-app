@@ -19,12 +19,16 @@ class App extends Component {
   createTask = (label, min, sec) => {
     return {
       label,
-      min,
-      sec,
       created: new Date(),
       id: this.maxId++,
       completed: false,
       editing: false,
+      timer: {
+        startAt: null,
+        remainingMin: min,
+        remainingSec: sec,
+        intervalId: null,
+      },
     };
   };
 
@@ -97,6 +101,52 @@ class App extends Component {
     });
   };
 
+  onToggleTimerStart = (id) => {
+    const { todoData } = this.state;
+
+    const currentObj = todoData.find((el) => el.id === id);
+    const { remainingMin, remainingSec, intervalId } = currentObj.timer;
+
+    if (intervalId) return;
+
+    const totalMilliseconds = (remainingMin * 60 + remainingSec) * 1000;
+    const startAt = Date.now();
+
+    this.updateTask(id, (el) => ({ ...el, timer: { ...el.timer, startAt } }));
+
+    clearInterval(currentObj.timer.intervalId);
+
+    const newIntervalId = setInterval(() => {
+      const remainingTime = totalMilliseconds - (Date.now() - startAt);
+
+      if (remainingTime <= 0) {
+        clearInterval(newIntervalId);
+
+        this.updateTask(id, (el) => ({
+          ...el,
+          timer: { ...el.timer, remainingMin: 0, remainingSec: 0, intervalId: null },
+        }));
+      } else {
+        let remainingMin = 0;
+        let remainingSec = Math.round(remainingTime / 1000);
+
+        while (remainingSec >= 60) {
+          remainingSec -= 60;
+          remainingMin += 1;
+        }
+
+        this.updateTask(id, (el) => ({ ...el, timer: { ...el.timer, remainingMin, remainingSec } }));
+      }
+    }, 1000);
+
+    this.updateTask(id, (el) => ({
+      ...el,
+      timer: { ...el.timer, intervalId: newIntervalId },
+    }));
+  };
+
+  onToggleTimerPause = () => {};
+
   render() {
     const { todoData, show } = this.state;
 
@@ -114,6 +164,8 @@ class App extends Component {
             onDeleted={this.deleteItem}
             onEditClick={this.onEditClick}
             onEditSave={this.onEditSave}
+            onToggleTimerStart={this.onToggleTimerStart}
+            onToggleTimerPause={this.onToggleTimerPause}
           />
           <Footer onDeleteAll={this.deleteCompletedItems} onFilter={this.onFilter} todos={todoData} show={show} />
         </section>

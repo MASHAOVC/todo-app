@@ -32,7 +32,7 @@ export default class NewTaskForm extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
 
-    this.props.onItemAdded(this.state.label, this.state.min, this.state.sec);
+    this.props.onItemAdded(this.state.label, +this.state.min, +this.state.sec);
 
     this.setState({
       label: '',
@@ -70,7 +70,7 @@ export default class NewTaskForm extends Component {
           type="number"
           name="seconds"
           min="0"
-          max="60"
+          max="59"
           value={this.state.sec}
           onChange={this.onSecChange}
           placeholder="Sec"

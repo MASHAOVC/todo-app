@@ -5,6 +5,7 @@ import './index.css';
 import NewTaskForm from './components/new-task-form';
 import TaskList from './components/task-list';
 import Footer from './components/footer';
+import { parseTime } from './utils/parse-time';
 
 class App extends Component {
   constructor() {
@@ -48,7 +49,12 @@ class App extends Component {
   };
 
   onToggleCompleted = (id) => {
-    this.updateTask(id, (el) => ({ ...el, completed: !el.completed }));
+    const currentObj = this.findTaskById(id);
+    const { intervalId } = currentObj.timer;
+
+    this.updateTask(id, (el) => ({ ...el, completed: !el.completed, timer: { ...el.timer, intervalId: null } }));
+
+    clearInterval(intervalId);
   };
 
   onEditClick = (id) => {
@@ -60,6 +66,11 @@ class App extends Component {
   };
 
   deleteItem = (id) => {
+    const currentObj = this.findTaskById(id);
+    const { intervalId } = currentObj.timer;
+
+    clearInterval(intervalId);
+
     this.setState(({ todoData }) => {
       const idx = todoData.findIndex((el) => el.id === id);
 
@@ -87,7 +98,8 @@ class App extends Component {
 
   deleteCompletedItems = () => {
     this.setState(({ todoData }) => {
-      const newArr = todoData.filter((el) => !el.completed);
+      const newArr = [];
+      todoData.forEach((el) => (!el.completed ? newArr.push(el) : clearInterval(el.timer.intervalId)));
 
       return {
         todoData: newArr,
@@ -102,9 +114,7 @@ class App extends Component {
   };
 
   onToggleTimerStart = (id) => {
-    const { todoData } = this.state;
-
-    const currentObj = todoData.find((el) => el.id === id);
+    const currentObj = this.findTaskById(id);
     const { remainingMin, remainingSec, intervalId } = currentObj.timer;
 
     if (intervalId) return;
@@ -114,8 +124,6 @@ class App extends Component {
 
     this.updateTask(id, (el) => ({ ...el, timer: { ...el.timer, startAt } }));
 
-    clearInterval(currentObj.timer.intervalId);
-
     const newIntervalId = setInterval(() => {
       const remainingTime = totalMilliseconds - (Date.now() - startAt);
 
@@ -124,18 +132,12 @@ class App extends Component {
 
         this.updateTask(id, (el) => ({
           ...el,
-          timer: { ...el.timer, remainingMin: 0, remainingSec: 0, intervalId: null },
+          timer: { ...el.timer, remainingMin: 0, remainingSec: 0 },
         }));
       } else {
-        let remainingMin = 0;
-        let remainingSec = Math.round(remainingTime / 1000);
+        const { min, sec } = parseTime(remainingTime);
 
-        while (remainingSec >= 60) {
-          remainingSec -= 60;
-          remainingMin += 1;
-        }
-
-        this.updateTask(id, (el) => ({ ...el, timer: { ...el.timer, remainingMin, remainingSec } }));
+        this.updateTask(id, (el) => ({ ...el, timer: { ...el.timer, remainingMin: min, remainingSec: sec } }));
       }
     }, 1000);
 
@@ -145,7 +147,21 @@ class App extends Component {
     }));
   };
 
-  onToggleTimerPause = () => {};
+  onToggleTimerPause = (id) => {
+    const currentObj = this.findTaskById(id);
+    const { intervalId } = currentObj.timer;
+
+    clearInterval(intervalId);
+
+    this.updateTask(id, (el) => ({ ...el, timer: { ...el.timer, intervalId: null } }));
+  };
+
+  findTaskById = (id) => {
+    const { todoData } = this.state;
+    const currentObj = todoData.find((el) => el.id === id);
+
+    return currentObj;
+  };
 
   render() {
     const { todoData, show } = this.state;

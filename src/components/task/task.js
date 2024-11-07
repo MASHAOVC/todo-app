@@ -29,36 +29,6 @@ export default class Task extends Component {
     }, 1000);
   };
 
-  // onToggleTimerStart = () => {
-  //   const { min, sec } = this.props;
-  //   const totalMilliseconds = (min * 60 + sec) * 1000;
-
-  //   this.setState({
-  //     startAt: Date.now(),
-  //   });
-
-  //   clearInterval(this.intervalId);
-
-  //   this.intervalId = setInterval(() => {
-  //     const remainingTime = totalMilliseconds - (Date.now() - this.state.startAt);
-
-  //     if (remainingTime <= 0) {
-  //       clearInterval(this.intervalId);
-  //       this.setState({ remainingMin: 0, remainingSec: 0 });
-  //     } else {
-  //       let remainingMin = 0;
-  //       let remainingSec = Math.round(remainingTime / 1000);
-
-  //       while (remainingSec >= 60) {
-  //         remainingSec -= 60;
-  //         remainingMin += 1;
-  //       }
-
-  //       this.setState({ remainingMin, remainingSec });
-  //     }
-  //   }, 1000);
-  // };
-
   render() {
     const {
       label,
@@ -74,7 +44,9 @@ export default class Task extends Component {
     } = this.props;
     const { formattedCreateTime } = this.state;
 
-    const displaySec = timer.remainingSec < 10 ? `0${timer.remainingSec}` : timer.remainingSec;
+    const displayMin = completed ? '0' : timer.remainingMin;
+    const formattedSec = timer.remainingSec < 10 ? `0${timer.remainingSec}` : timer.remainingSec;
+    const displaySec = completed ? '00' : formattedSec;
 
     return (
       <div className="view">
@@ -105,10 +77,10 @@ export default class Task extends Component {
             <button
               className="icon icon-pause"
               onClick={() => {
-                onToggleTimerPause();
+                onToggleTimerPause(id);
               }}
             ></button>
-            {` ${timer.remainingMin}:${displaySec}`}
+            {` ${displayMin}:${displaySec}`}
           </span>
           <span className="description"> created {formattedCreateTime || formatDistanceToNow(created)} ago</span>
         </label>

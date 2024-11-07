@@ -24,7 +24,7 @@
     "lint:fix": "eslint ./src --fix",
     "prepare": "husky",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,html}\"",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build -b gh-pages"
   },
   "browserslist": {
     "production": [

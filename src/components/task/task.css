@@ -42,12 +42,12 @@
 	padding: 15px 85px 15px 60px;
 }
 
-.todo-list li label .created {
+.todo-list li label .description {
 	font-size: 13px;
 	color: gray;
 }
 
-.todo-list li label .description {
+.todo-list li label .title {
 	word-break: break-all;
 	display: block;
 	line-height: 1.2;
@@ -56,15 +56,12 @@
 	color: #4d4d4d;
 }
 
-.todo-list li.completed label .description {
+.todo-list li.completed label .title {
 	color: #cdcdcd;
 	text-decoration: line-through;
 }
 
 .todo-list li .icon {
-	position: absolute;
-	top: 0;
-	bottom: -3px;
 	width: 30px;
 	height: 40px;
 	font-size: 34px;
@@ -79,6 +76,9 @@
 }
 
 .todo-list li .icon-destroy {
+	position: absolute;
+	top: 0;
+	bottom: -3px;
 	right: 10px;
 }
 
@@ -87,6 +87,9 @@
 }
 
 .todo-list li .icon-edit {
+	position: absolute;
+	top: 0;
+	bottom: -3px;
 	font-size: 19px;
 	right: 45px;
 }
@@ -95,6 +98,37 @@
 	content: '✎';
 }
 
+.todo-list li .icon-pause,
+.todo-list li .icon-play {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+}
+
+.todo-list li .icon-play {
+	font-size: 15px;
+	margin-bottom: auto;
+}
+
+.todo-list li .icon-pause {
+	font-size: 15px;
+	margin-top: 5px;
+	margin-right: 3px;
+}
+
+.icon-pause:after {
+	content: '⏸';
+	display: inline-flex;
+}
+
+.icon-play:after {
+	content: '▶';
+}
+
+.description-timer {
+	display: flex;
+	align-items: center;
+}
 /*
 	Hack to remove background from Mobile Safari.
 	Can't use it globally since it destroys checkboxes in Firefox

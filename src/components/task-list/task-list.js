@@ -6,7 +6,16 @@ import EditForm from '../edit-form/edit-form';
 
 export default class TaskList extends Component {
   render() {
-    const { todos, show, onToggleCompleted, onDeleted, onEditClick, onEditSave } = this.props;
+    const {
+      todos,
+      show,
+      onToggleCompleted,
+      onDeleted,
+      onEditClick,
+      onEditSave,
+      onToggleTimerStart,
+      onToggleTimerPause,
+    } = this.props;
 
     const elements = todos
       .filter((todo) => {
@@ -37,7 +46,14 @@ export default class TaskList extends Component {
             {editing ? (
               <EditForm {...el} onEditSave={onEditSave} />
             ) : (
-              <Task {...el} onToggleCompleted={onToggleCompleted} onDeleted={onDeleted} onEditClick={onEditClick} />
+              <Task
+                {...el}
+                onToggleCompleted={onToggleCompleted}
+                onDeleted={onDeleted}
+                onEditClick={onEditClick}
+                onToggleTimerStart={onToggleTimerStart}
+                onToggleTimerPause={onToggleTimerPause}
+              />
             )}
           </li>
         );

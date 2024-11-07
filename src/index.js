@@ -5,6 +5,7 @@ import './index.css';
 import NewTaskForm from './components/new-task-form';
 import TaskList from './components/task-list';
 import Footer from './components/footer';
+import { parseTime } from './utils/parse-time';
 
 class App extends Component {
   constructor() {
@@ -16,13 +17,19 @@ class App extends Component {
     };
   }
 
-  createTask = (label) => {
+  createTask = (label, min, sec) => {
     return {
       label,
       created: new Date(),
       id: this.maxId++,
       completed: false,
       editing: false,
+      timer: {
+        startAt: null,
+        remainingMin: min,
+        remainingSec: sec,
+        intervalId: null,
+      },
     };
   };
 
@@ -42,7 +49,12 @@ class App extends Component {
   };
 
   onToggleCompleted = (id) => {
-    this.updateTask(id, (el) => ({ ...el, completed: !el.completed }));
+    const currentObj = this.findTaskById(id);
+    const { intervalId } = currentObj.timer;
+
+    this.updateTask(id, (el) => ({ ...el, completed: !el.completed, timer: { ...el.timer, intervalId: null } }));
+
+    clearInterval(intervalId);
   };
 
   onEditClick = (id) => {
@@ -54,6 +66,11 @@ class App extends Component {
   };
 
   deleteItem = (id) => {
+    const currentObj = this.findTaskById(id);
+    const { intervalId } = currentObj.timer;
+
+    clearInterval(intervalId);
+
     this.setState(({ todoData }) => {
       const idx = todoData.findIndex((el) => el.id === id);
 
@@ -68,8 +85,8 @@ class App extends Component {
     });
   };
 
-  addItem = (text) => {
-    const newItem = this.createTask(text);
+  addItem = (text, min, sec) => {
+    const newItem = this.createTask(text, min, sec);
 
     this.setState(({ todoData }) => {
       const newArr = [...todoData, newItem];
@@ -81,7 +98,8 @@ class App extends Component {
 
   deleteCompletedItems = () => {
     this.setState(({ todoData }) => {
-      const newArr = todoData.filter((el) => !el.completed);
+      const newArr = [];
+      todoData.forEach((el) => (!el.completed ? newArr.push(el) : clearInterval(el.timer.intervalId)));
 
       return {
         todoData: newArr,
@@ -93,6 +111,56 @@ class App extends Component {
     this.setState({
       show: string,
     });
+  };
+
+  onToggleTimerStart = (id) => {
+    const currentObj = this.findTaskById(id);
+    const { remainingMin, remainingSec, intervalId } = currentObj.timer;
+
+    if (intervalId) return;
+
+    const totalMilliseconds = (remainingMin * 60 + remainingSec) * 1000;
+    const startAt = Date.now();
+
+    this.updateTask(id, (el) => ({ ...el, timer: { ...el.timer, startAt } }));
+
+    const newIntervalId = setInterval(() => {
+      const remainingTime = totalMilliseconds - (Date.now() - startAt);
+
+      if (remainingTime <= 0) {
+        clearInterval(newIntervalId);
+
+        this.updateTask(id, (el) => ({
+          ...el,
+          timer: { ...el.timer, remainingMin: 0, remainingSec: 0 },
+        }));
+      } else {
+        const { min, sec } = parseTime(remainingTime);
+
+        this.updateTask(id, (el) => ({ ...el, timer: { ...el.timer, remainingMin: min, remainingSec: sec } }));
+      }
+    }, 1000);
+
+    this.updateTask(id, (el) => ({
+      ...el,
+      timer: { ...el.timer, intervalId: newIntervalId },
+    }));
+  };
+
+  onToggleTimerPause = (id) => {
+    const currentObj = this.findTaskById(id);
+    const { intervalId } = currentObj.timer;
+
+    clearInterval(intervalId);
+
+    this.updateTask(id, (el) => ({ ...el, timer: { ...el.timer, intervalId: null } }));
+  };
+
+  findTaskById = (id) => {
+    const { todoData } = this.state;
+    const currentObj = todoData.find((el) => el.id === id);
+
+    return currentObj;
   };
 
   render() {
@@ -112,6 +180,8 @@ class App extends Component {
             onDeleted={this.deleteItem}
             onEditClick={this.onEditClick}
             onEditSave={this.onEditSave}
+            onToggleTimerStart={this.onToggleTimerStart}
+            onToggleTimerPause={this.onToggleTimerPause}
           />
           <Footer onDeleteAll={this.deleteCompletedItems} onFilter={this.onFilter} todos={todoData} show={show} />
         </section>

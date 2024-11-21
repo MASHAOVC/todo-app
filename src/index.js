@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import { Component } from 'react';
+import { useState } from 'react';
 
 import './index.css';
 import NewTaskForm from './components/new-task-form';
@@ -7,21 +7,18 @@ import TaskList from './components/task-list';
 import Footer from './components/footer';
 import { parseTime } from './utils/parse-time';
 
-class App extends Component {
-  constructor() {
-    super();
-    this.maxId = 100;
-    this.state = {
-      todoData: [],
-      show: 'all',
-    };
-  }
+function App() {
+  const [maxId, setMaxId] = useState(100);
+  const [todoData, setTodoData] = useState([]);
+  const [show, setShow] = useState('all');
 
-  createTask = (label, min, sec) => {
+  const createTask = (label, min, sec) => {
+    setMaxId((prevMaxId) => prevMaxId + 1);
+
     return {
       label,
       created: new Date(),
-      id: this.maxId++,
+      id: maxId,
       completed: false,
       editing: false,
       timer: {
@@ -33,9 +30,9 @@ class App extends Component {
     };
   };
 
-  updateTask = (id, cb) => {
-    this.setState(({ todoData }) => {
-      let newArr = todoData.map((el) => {
+  const updateTask = (id, cb) => {
+    setTodoData((prevTodoData) => {
+      return prevTodoData.map((el) => {
         if (el.id === id) {
           const newItem = cb(el);
           return newItem;
@@ -43,78 +40,68 @@ class App extends Component {
 
         return el;
       });
-
-      return { todoData: newArr };
     });
   };
 
-  onToggleCompleted = (id) => {
-    const currentObj = this.findTaskById(id);
+  const onToggleCompleted = (id) => {
+    const currentObj = findTaskById(id);
     const { intervalId } = currentObj.timer;
 
-    this.updateTask(id, (el) => ({ ...el, completed: !el.completed, timer: { ...el.timer, intervalId: null } }));
+    updateTask(id, (el) => ({ ...el, completed: !el.completed, timer: { ...el.timer, intervalId: null } }));
 
     clearInterval(intervalId);
   };
 
-  onEditClick = (id) => {
-    this.updateTask(id, (el) => ({ ...el, editing: !el.editing }));
+  const onEditClick = (id) => {
+    updateTask(id, (el) => ({ ...el, editing: !el.editing }));
   };
 
-  onEditSave = (text, id) => {
-    this.updateTask(id, (el) => ({ ...el, editing: !el.editing, label: text }));
+  const onEditSave = (text, id) => {
+    updateTask(id, (el) => ({ ...el, editing: !el.editing, label: text }));
   };
 
-  deleteItem = (id) => {
-    const currentObj = this.findTaskById(id);
+  const deleteItem = (id) => {
+    const currentObj = findTaskById(id);
     const { intervalId } = currentObj.timer;
 
     clearInterval(intervalId);
 
-    this.setState(({ todoData }) => {
-      const idx = todoData.findIndex((el) => el.id === id);
+    setTodoData((prevtodoData) => {
+      const idx = prevtodoData.findIndex((el) => el.id === id);
 
-      const before = todoData.slice(0, idx);
-      const after = todoData.slice(idx + 1);
+      const before = prevtodoData.slice(0, idx);
+      const after = prevtodoData.slice(idx + 1);
 
-      const newArr = [...before, ...after];
+      const newTodoData = [...before, ...after];
 
-      return {
-        todoData: newArr,
-      };
+      return newTodoData;
     });
   };
 
-  addItem = (text, min, sec) => {
-    const newItem = this.createTask(text, min, sec);
+  const addItem = (text, min, sec) => {
+    const newItem = createTask(text, min, sec);
 
-    this.setState(({ todoData }) => {
-      const newArr = [...todoData, newItem];
-      return {
-        todoData: newArr,
-      };
+    setTodoData((prevTodoData) => {
+      const newTodoData = [...prevTodoData, newItem];
+      return newTodoData;
     });
   };
 
-  deleteCompletedItems = () => {
-    this.setState(({ todoData }) => {
-      const newArr = [];
-      todoData.forEach((el) => (!el.completed ? newArr.push(el) : clearInterval(el.timer.intervalId)));
+  const deleteCompletedItems = () => {
+    setTodoData((prevTodoData) => {
+      const newTodoData = [];
+      prevTodoData.forEach((el) => (!el.completed ? newTodoData.push(el) : clearInterval(el.timer.intervalId)));
 
-      return {
-        todoData: newArr,
-      };
+      return newTodoData;
     });
   };
 
-  onFilter = (string) => {
-    this.setState({
-      show: string,
-    });
+  const onFilter = (string) => {
+    setShow(string);
   };
 
-  onToggleTimerStart = (id) => {
-    const currentObj = this.findTaskById(id);
+  const onToggleTimerStart = (id) => {
+    const currentObj = findTaskById(id);
     const { remainingMin, remainingSec, intervalId } = currentObj.timer;
 
     if (intervalId) return;
@@ -122,7 +109,7 @@ class App extends Component {
     const totalMilliseconds = (remainingMin * 60 + remainingSec) * 1000;
     const startAt = Date.now();
 
-    this.updateTask(id, (el) => ({ ...el, timer: { ...el.timer, startAt } }));
+    updateTask(id, (el) => ({ ...el, timer: { ...el.timer, startAt } }));
 
     const newIntervalId = setInterval(() => {
       const remainingTime = totalMilliseconds - (Date.now() - startAt);
@@ -130,64 +117,59 @@ class App extends Component {
       if (remainingTime <= 0) {
         clearInterval(newIntervalId);
 
-        this.updateTask(id, (el) => ({
+        updateTask(id, (el) => ({
           ...el,
           timer: { ...el.timer, remainingMin: 0, remainingSec: 0 },
         }));
       } else {
         const { min, sec } = parseTime(remainingTime);
 
-        this.updateTask(id, (el) => ({ ...el, timer: { ...el.timer, remainingMin: min, remainingSec: sec } }));
+        updateTask(id, (el) => ({ ...el, timer: { ...el.timer, remainingMin: min, remainingSec: sec } }));
       }
     }, 1000);
 
-    this.updateTask(id, (el) => ({
+    updateTask(id, (el) => ({
       ...el,
       timer: { ...el.timer, intervalId: newIntervalId },
     }));
   };
 
-  onToggleTimerPause = (id) => {
-    const currentObj = this.findTaskById(id);
+  const onToggleTimerPause = (id) => {
+    const currentObj = findTaskById(id);
     const { intervalId } = currentObj.timer;
 
     clearInterval(intervalId);
 
-    this.updateTask(id, (el) => ({ ...el, timer: { ...el.timer, intervalId: null } }));
+    updateTask(id, (el) => ({ ...el, timer: { ...el.timer, intervalId: null } }));
   };
 
-  findTaskById = (id) => {
-    const { todoData } = this.state;
+  const findTaskById = (id) => {
     const currentObj = todoData.find((el) => el.id === id);
 
     return currentObj;
   };
 
-  render() {
-    const { todoData, show } = this.state;
-
-    return (
-      <section className="todoapp">
-        <header>
-          <h1 className="heading">todos</h1>
-          <NewTaskForm onItemAdded={this.addItem} />
-        </header>
-        <section className="main">
-          <TaskList
-            todos={todoData}
-            show={show}
-            onToggleCompleted={this.onToggleCompleted}
-            onDeleted={this.deleteItem}
-            onEditClick={this.onEditClick}
-            onEditSave={this.onEditSave}
-            onToggleTimerStart={this.onToggleTimerStart}
-            onToggleTimerPause={this.onToggleTimerPause}
-          />
-          <Footer onDeleteAll={this.deleteCompletedItems} onFilter={this.onFilter} todos={todoData} show={show} />
-        </section>
+  return (
+    <section className="todoapp">
+      <header>
+        <h1 className="heading">todos</h1>
+        <NewTaskForm onItemAdded={addItem} />
+      </header>
+      <section className="main">
+        <TaskList
+          todos={todoData}
+          show={show}
+          onToggleCompleted={onToggleCompleted}
+          onDeleted={deleteItem}
+          onEditClick={onEditClick}
+          onEditSave={onEditSave}
+          onToggleTimerStart={onToggleTimerStart}
+          onToggleTimerPause={onToggleTimerPause}
+        />
+        <Footer onDeleteAll={deleteCompletedItems} onFilter={onFilter} todos={todoData} show={show} />
       </section>
-    );
-  }
+    </section>
+  );
 }
 
 createRoot(document.getElementById('root')).render(<App />);

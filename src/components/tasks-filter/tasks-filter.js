@@ -1,19 +1,8 @@
-import { Component } from 'react';
 import './tasks-filter.css';
 import PropTypes from 'prop-types';
 
-export default class TasksFilter extends Component {
-  static defaultProps = {
-    show: 'all',
-  };
-
-  static propTypes = {
-    show: PropTypes.string,
-  };
-
-  getClassNames = () => {
-    const { show } = this.props;
-
+export default function TasksFilter({ show, onFilter }) {
+  const getClassNames = () => {
     let className = '';
     let activeClassName = '';
     let completedClassName = '';
@@ -38,44 +27,50 @@ export default class TasksFilter extends Component {
     return { className, activeClassName, completedClassName };
   };
 
-  render() {
-    const { onFilter } = this.props;
+  let { className, activeClassName, completedClassName } = getClassNames();
 
-    let { className, activeClassName, completedClassName } = this.getClassNames();
-
-    return (
-      <ul className="filters">
-        <li>
-          <button
-            className={className}
-            onClick={() => {
-              onFilter('all');
-            }}
-          >
-            All
-          </button>
-        </li>
-        <li>
-          <button
-            className={activeClassName}
-            onClick={() => {
-              onFilter('active');
-            }}
-          >
-            Active
-          </button>
-        </li>
-        <li>
-          <button
-            className={completedClassName}
-            onClick={() => {
-              onFilter('completed');
-            }}
-          >
-            Completed
-          </button>
-        </li>
-      </ul>
-    );
-  }
+  return (
+    <ul className="filters">
+      <li>
+        <button
+          className={className}
+          onClick={() => {
+            onFilter('all');
+          }}
+        >
+          All
+        </button>
+      </li>
+      <li>
+        <button
+          className={activeClassName}
+          onClick={() => {
+            onFilter('active');
+          }}
+        >
+          Active
+        </button>
+      </li>
+      <li>
+        <button
+          className={completedClassName}
+          onClick={() => {
+            onFilter('completed');
+          }}
+        >
+          Completed
+        </button>
+      </li>
+    </ul>
+  );
 }
+
+// Задаём значения по умолчанию для пропсов
+TasksFilter.defaultProps = {
+  show: 'all',
+};
+
+// Устанавливаем проверки типов для пропсов
+TasksFilter.propTypes = {
+  show: PropTypes.string,
+};

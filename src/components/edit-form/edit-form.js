@@ -1,35 +1,20 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import './edit-form.css';
 
-export default class EditForm extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      label: props.label,
-    };
-  }
+export default function EditForm({ label, id, onEditSave }) {
+  const [currentLabel, setCurrentLabel] = useState(label);
 
-  onLabelChange = (e) => {
-    this.setState({
-      label: e.target.value,
-    });
+  const onLabelChange = (e) => {
+    setCurrentLabel(e.target.value);
   };
 
-  onKeyDown = (e) => {
+  const onKeyDown = (e) => {
     if (e.key === 'Enter') {
-      this.props.onEditSave(e.target.value, this.props.id);
+      onEditSave(e.target.value, id);
     }
   };
 
-  render() {
-    return (
-      <input
-        type="text"
-        className="edit"
-        value={this.state.label}
-        onChange={this.onLabelChange}
-        onKeyDown={this.onKeyDown}
-      ></input>
-    );
-  }
+  return (
+    <input type="text" className="edit" value={currentLabel} onChange={onLabelChange} onKeyDown={onKeyDown}></input>
+  );
 }

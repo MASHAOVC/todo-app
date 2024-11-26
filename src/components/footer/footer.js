@@ -1,11 +1,8 @@
-import { Component } from 'react';
 import './footer.css';
-
 import TasksFilter from '../tasks-filter';
 
-export default class Footer extends Component {
-  countActive = () => {
-    const { todos } = this.props;
+export default function Footer({ onDeleteAll, onFilter, show, todos }) {
+  const countActive = () => {
     let activeCount = 0;
 
     for (let i = 0; i < todos.length; i++) {
@@ -15,22 +12,18 @@ export default class Footer extends Component {
     return activeCount;
   };
 
-  render() {
-    const { onDeleteAll, onFilter, show } = this.props;
-
-    return (
-      <footer className="footer">
-        <span className="todo-count"> {this.countActive()} items left</span>
-        <TasksFilter show={show} onFilter={onFilter} />
-        <button
-          className="clear-completed"
-          onClick={() => {
-            onDeleteAll();
-          }}
-        >
-          Clear completed
-        </button>
-      </footer>
-    );
-  }
+  return (
+    <footer className="footer">
+      <span className="todo-count"> {countActive()} items left</span>
+      <TasksFilter show={show} onFilter={onFilter} />
+      <button
+        className="clear-completed"
+        onClick={() => {
+          onDeleteAll();
+        }}
+      >
+        Clear completed
+      </button>
+    </footer>
+  );
 }

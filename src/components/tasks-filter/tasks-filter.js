@@ -1,7 +1,11 @@
 import './tasks-filter.css';
 import PropTypes from 'prop-types';
+import { context } from '../../context';
+import { useContext } from 'react';
 
-export default function TasksFilter({ show, onFilter }) {
+export default function TasksFilter({ onFilter }) {
+  const show = useContext(context);
+
   const getClassNames = () => {
     let className = '';
     let activeClassName = '';
@@ -64,11 +68,6 @@ export default function TasksFilter({ show, onFilter }) {
     </ul>
   );
 }
-
-// Задаём значения по умолчанию для пропсов
-TasksFilter.defaultProps = {
-  show: 'all',
-};
 
 // Устанавливаем проверки типов для пропсов
 TasksFilter.propTypes = {

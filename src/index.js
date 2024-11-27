@@ -6,6 +6,7 @@ import NewTaskForm from './components/new-task-form';
 import TaskList from './components/task-list';
 import Footer from './components/footer';
 import { parseTime } from './utils/parse-time';
+import { context } from './context';
 
 function App() {
   const [maxId, setMaxId] = useState(100);
@@ -166,7 +167,9 @@ function App() {
           onToggleTimerStart={onToggleTimerStart}
           onToggleTimerPause={onToggleTimerPause}
         />
-        <Footer onDeleteAll={deleteCompletedItems} onFilter={onFilter} todos={todoData} show={show} />
+        <context.Provider value={show}>
+          <Footer onDeleteAll={deleteCompletedItems} onFilter={onFilter} todos={todoData} />
+        </context.Provider>
       </section>
     </section>
   );

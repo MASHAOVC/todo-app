@@ -1,7 +1,7 @@
 import './footer.css';
 import TasksFilter from '../tasks-filter';
 
-export default function Footer({ onDeleteAll, onFilter, show, todos }) {
+export default function Footer({ onDeleteAll, onFilter, todos }) {
   const countActive = () => {
     let activeCount = 0;
 
@@ -15,7 +15,7 @@ export default function Footer({ onDeleteAll, onFilter, show, todos }) {
   return (
     <footer className="footer">
       <span className="todo-count"> {countActive()} items left</span>
-      <TasksFilter show={show} onFilter={onFilter} />
+      <TasksFilter onFilter={onFilter} />
       <button
         className="clear-completed"
         onClick={() => {

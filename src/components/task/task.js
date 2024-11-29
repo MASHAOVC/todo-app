@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import './task.css';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -17,19 +17,12 @@ export default function Task({
   const [formattedCreateTime, setFormattedCreateTime] = useState();
   const intervalIdRef = useRef(null);
 
-  // componentDidMount() {
-  //   this.delayTimeUpdate();
-  // }
-
-  // componentWillUnmount() {
-  //   clearInterval(this.intervalIdRef);
-  // }
-
-  const delayTimeUpdate = () => {
+  useEffect(() => {
     intervalIdRef.current = setInterval(() => {
       setFormattedCreateTime(formatDistanceToNow(created));
     }, 1000);
-  };
+    return () => clearInterval(intervalIdRef.current);
+  }, []);
 
   const displayMin = completed ? '0' : timer.remainingMin;
   const formattedSec = timer.remainingSec < 10 ? `0${timer.remainingSec}` : timer.remainingSec;
